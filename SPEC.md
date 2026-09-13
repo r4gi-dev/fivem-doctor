@@ -1,9 +1,9 @@
-# fivem-doctor Specification
+﻿# fivem-doctor Specification
 
-**Status:** Draft  
-**Version:** 0.1.0  
-**Project Type:** Open Source  
-**Language:** Rust  
+**Status:** Implemented
+**Version:** 0.1.0
+**Project Type:** Open Source
+**Language:** Rust
 **Target:** FiveM Resource Developers
 
 ---
@@ -37,17 +37,17 @@ FiveM Doctor v0.1.0
 Analyzing: my-resource
 
 Manifest
-  ✓ fxmanifest.lua found
-  ✓ Resource manifest is valid
+  笨・fxmanifest.lua found
+  笨・Resource manifest is valid
 
 Files
-  ✓ All referenced files exist
+  笨・All referenced files exist
 
 Lua
-  ⚠ Potentially unsafe server event
+  笞 Potentially unsafe server event
 
 Security
-  ⚠ Client-controlled value detected
+  笞 Client-controlled value detected
 
 Summary
   Errors:   0
@@ -257,20 +257,29 @@ Reasons:
 
 ---
 
-## 5.2 Planned Rust Dependencies
+## 5.2 Rust Dependencies
 
-The exact dependency versions should be finalized during implementation.
+The v0.1.0 implementation uses the following dependencies:
 
-Potential dependencies include:
+- `anyhow` 窶・application-level error handling
+- `clap` 窶・CLI argument parsing
+- `full_moon` 窶・Lua parsing and AST analysis
+- `serde` 窶・diagnostic serialization
+- `serde_json` 窶・JSON output
+- `thiserror` 窶・typed error support
 
-- `clap` — CLI argument parsing
-- `serde` — serialization
-- `serde_json` — JSON output
-- `toml` — configuration
-- `anyhow` — application-level error handling
-- `thiserror` — typed errors
-- Lua parser/AST library — Lua analysis
-- `globset` or equivalent — manifest glob handling
+Additional dependencies may be introduced in future versions when required.
+
+Future candidates include:
+
+- `clap` 窶・CLI argument parsing
+- `serde` 窶・serialization
+- `serde_json` 窶・JSON output
+- `toml` 窶・configuration
+- `anyhow` 窶・application-level error handling
+- `thiserror` 窶・typed errors
+- Lua parser/AST library 窶・Lua analysis
+- `globset` or equivalent 窶・manifest glob handling
 
 Dependencies should remain minimal where practical.
 
@@ -282,29 +291,23 @@ The project should be divided into the following layers:
 
 ```text
 CLI
- │
- ▼
+ 笏・ 笆ｼ
 Analyzer
- │
- ├── Resource Analyzer
- ├── Manifest Analyzer
- └── Lua Analyzer
- │
- ▼
+ 笏・ 笏懌楳笏 Resource Analyzer
+ 笏懌楳笏 Manifest Analyzer
+ 笏披楳笏 Lua Analyzer
+ 笏・ 笆ｼ
 Rules
- │
- ├── Manifest Rules
- ├── Security Rules
- └── Performance Rules
- │
- ▼
+ 笏・ 笏懌楳笏 Manifest Rules
+ 笏懌楳笏 Security Rules
+ 笏披楳笏 Performance Rules
+ 笏・ 笆ｼ
 Diagnostics
- │
- ▼
+ 笏・ 笆ｼ
 Reporters
- ├── Terminal
- ├── JSON
- └── SARIF (future)
+ 笏懌楳笏 Terminal
+ 笏懌楳笏 JSON
+ 笏披楳笏 SARIF (future)
 ```
 
 The analyzer should not directly print output.
@@ -321,63 +324,48 @@ The initial repository structure should be:
 
 ```text
 fivem-doctor/
-│
-├── Cargo.toml
-├── Cargo.lock
-│
-├── README.md
-├── SPEC.md
-├── LICENSE
-├── CONTRIBUTING.md
-├── CODE_OF_CONDUCT.md
-└── CHANGELOG.md
-│
-├── .gitignore
-├── rustfmt.toml
-│
-├── .github/
-│   ├── workflows/
-│   │   ├── ci.yml
-│   │   └── release.yml
-│   │
-│   ├── ISSUE_TEMPLATE/
-│   │   ├── bug_report.yml
-│   │   └── feature_request.yml
-│   │
-│   └── pull_request_template.md
-│
-├── src/
-│   ├── main.rs
-│   │
-│   ├── cli/
-│   │   ├── mod.rs
-│   │   └── args.rs
-│   │
-│   ├── analyzer/
-│   │   ├── mod.rs
-│   │   ├── resource.rs
-│   │   ├── manifest.rs
-│   │   └── lua.rs
-│   │
-│   ├── rules/
-│   │   ├── mod.rs
-│   │   ├── manifest.rs
-│   │   ├── security.rs
-│   │   └── performance.rs
-│   │
-│   └── report/
-│       ├── mod.rs
-│       ├── terminal.rs
-│       └── json.rs
-│
-└── tests/
-    ├── fixtures/
-    │   ├── valid-resource/
-    │   ├── missing-file/
-    │   ├── unsafe-event/
-    │   └── performance/
-    │
-    └── integration.rs
+笏・笏懌楳笏 Cargo.toml
+笏懌楳笏 Cargo.lock
+笏・笏懌楳笏 README.md
+笏懌楳笏 SPEC.md
+笏懌楳笏 LICENSE
+笏懌楳笏 CONTRIBUTING.md
+笏懌楳笏 CODE_OF_CONDUCT.md
+笏披楳笏 CHANGELOG.md
+笏・笏懌楳笏 .gitignore
+笏懌楳笏 rustfmt.toml
+笏・笏懌楳笏 .github/
+笏・  笏懌楳笏 workflows/
+笏・  笏・  笏懌楳笏 ci.yml
+笏・  笏・  笏披楳笏 release.yml
+笏・  笏・笏・  笏懌楳笏 ISSUE_TEMPLATE/
+笏・  笏・  笏懌楳笏 bug_report.yml
+笏・  笏・  笏披楳笏 feature_request.yml
+笏・  笏・笏・  笏披楳笏 pull_request_template.md
+笏・笏懌楳笏 src/
+笏・  笏懌楳笏 main.rs
+笏・  笏・笏・  笏懌楳笏 cli/
+笏・  笏・  笏懌楳笏 mod.rs
+笏・  笏・  笏披楳笏 args.rs
+笏・  笏・笏・  笏懌楳笏 analyzer/
+笏・  笏・  笏懌楳笏 mod.rs
+笏・  笏・  笏懌楳笏 resource.rs
+笏・  笏・  笏懌楳笏 manifest.rs
+笏・  笏・  笏披楳笏 lua.rs
+笏・  笏・笏・  笏懌楳笏 rules/
+笏・  笏・  笏懌楳笏 mod.rs
+笏・  笏・  笏披楳笏 lua.rs
+笏・  笏・笏・  笏披楳笏 report/
+笏・      笏懌楳笏 mod.rs
+笏・      笏懌楳笏 terminal.rs
+笏・      笏披楳笏 json.rs
+笏・笏披楳笏 tests/
+    笏懌楳笏 fixtures/
+    笏・  笏懌楳笏 valid-resource/
+    笏・  笏懌楳笏 missing-file/
+    笏・  笏懌楳笏 unsafe-event/
+    笏・  笏披楳笏 performance/
+    笏・    笏披楳笏 integration.rs
 ```
 
 The structure may change during development if implementation experience indicates a better architecture.
@@ -423,6 +411,8 @@ The following options are planned.
 
 ## Output format
 
+Implemented in v0.1.0:
+
 ```bash
 --format terminal
 --format json
@@ -458,26 +448,21 @@ warning
 info
 ```
 
-The exact semantics will be finalized during implementation.
+The semantics are finalized for v0.1.0 as documented in Section 30.
 
 ---
 
 ## Configuration file
 
-Example:
+Configuration files are **not implemented in v0.1.0**.
 
-```bash
---config fivem-doctor.toml
-```
-
-If no configuration file is specified, the application should search for:
+The planned configuration file is:
 
 ```text
 fivem-doctor.toml
 ```
 
-in the target project.
-
+Configuration support is planned for a future release and may include rule severity, ignored paths, and framework settings.
 ---
 
 # 10. Resource Discovery
@@ -500,10 +485,10 @@ Example:
 
 ```text
 my-resource/
-├── fxmanifest.lua
-├── client/
-├── server/
-└── shared/
+笏懌楳笏 fxmanifest.lua
+笏懌楳笏 client/
+笏懌楳笏 server/
+笏披楳笏 shared/
 ```
 
 ---
@@ -546,7 +531,7 @@ The implementation should follow the official FiveM resource manifest behavior a
 
 # 12. Manifest Rule Specification
 
-## F001 — Missing Resource Manifest
+## F001 窶・Missing Resource Manifest
 
 ### Severity
 
@@ -568,7 +553,7 @@ The target directory does not appear to be a valid FiveM resource.
 
 ---
 
-## F002 — Referenced File Does Not Exist
+## F002 窶・Referenced File Does Not Exist
 
 ### Severity
 
@@ -609,7 +594,7 @@ fxmanifest.lua:5
 
 ---
 
-## F003 — Deprecated Lua 5.4 Manifest Setting
+## F003 窶・Deprecated Lua 5.4 Manifest Setting
 
 ### Severity
 
@@ -657,11 +642,13 @@ for diagnostics.
 
 Security analysis is a major long-term feature of `fivem-doctor`.
 
-The v0.1 implementation should introduce basic security heuristics without attempting to prove that code is secure or insecure.
+The v0.1.0 implementation introduces basic security heuristics without attempting to prove that code is secure or insecure.
+
+F004, F007, and F008 are heuristic checks. Their findings indicate patterns that deserve manual review and are not, by themselves, proof of a vulnerability.
 
 ---
 
-## F004 — Potentially Unsafe Server Event
+## F004 窶・Potentially Unsafe Server Event
 
 ### Severity
 
@@ -717,7 +704,7 @@ The rule should avoid claiming a vulnerability unless sufficient evidence exists
 
 ---
 
-# 15. F005 — Potentially Expensive Frame Loop
+# 15. F005 窶・Potentially Expensive Frame Loop
 
 ### Severity
 
@@ -766,7 +753,7 @@ The rule is intended to identify potentially problematic code for manual review.
 
 ---
 
-# 16. F006 — Debug Output
+# 16. F006 窶・Debug Output
 
 ### Severity
 
@@ -795,7 +782,7 @@ This rule should be configurable and may be disabled by users.
 
 ---
 
-# 17. F007 — Potential Privileged Event
+# 17. F007 窶・Potential Privileged Event
 
 ### Severity
 
@@ -852,7 +839,7 @@ The analyzer must clearly communicate that the result is not proof of a vulnerab
 
 ---
 
-# 18. F008 — Client-Controlled Value
+# 18. F008 窶・Client-Controlled Value
 
 ### Severity
 
@@ -1085,16 +1072,13 @@ Example:
 
 ```text
 Core Rules
-    │
-    ├── FiveM
-    │
-    └── Lua
+    笏・    笏懌楳笏 FiveM
+    笏・    笏披楳笏 Lua
 
 Framework Rules
-    │
-    ├── QBCore
-    ├── ESX
-    └── ox
+    笏・    笏懌楳笏 QBCore
+    笏懌楳笏 ESX
+    笏披楳笏 ox
 ```
 
 The core analyzer must remain functional when no framework is detected.
@@ -1111,11 +1095,11 @@ Example:
 
 ```text
 tests/
-└── fixtures/
-    ├── valid-resource/
-    ├── missing-file/
-    ├── unsafe-event/
-    └── performance/
+笏披楳笏 fixtures/
+    笏懌楳笏 valid-resource/
+    笏懌楳笏 missing-file/
+    笏懌楳笏 unsafe-event/
+    笏披楳笏 performance/
 ```
 
 Tests should verify:
@@ -1222,16 +1206,22 @@ This will allow integration with GitHub code scanning and other compatible syste
 
 # 30. Exit Codes
 
-Planned exit codes:
+Exit codes for v0.1.0:
 
-```text
-0 = No findings above configured threshold
-1 = Findings detected above configured threshold
-2 = CLI/configuration error
-3 = Analysis error
-```
+| Code | Meaning |
+|---:|---|
+| `0` | No findings at or above the selected severity threshold |
+| `1` | One or more findings at or above the selected severity threshold |
+| `2` | CLI or argument/configuration error |
+| `3` | Analysis error |
 
-The exact behavior will be finalized before v0.1.0 release.
+Severity behavior:
+
+- `--severity info`: INFO, WARNING, and ERROR findings are reported.
+- `--severity warning`: WARNING and ERROR findings are reported.
+- `--severity error`: ERROR findings are reported.
+
+If the filtered diagnostic list is empty, the process exits with `0`. Otherwise it exits with `1`.
 
 ---
 
@@ -1278,15 +1268,11 @@ Planned workflow:
 
 ```text
 Pull Request
-     │
-     ▼
+     笏・     笆ｼ
 GitHub Actions
-     │
- ┌───┼─────────────┐
- ▼   ▼             ▼
+     笏・ 笏娯楳笏笏笏ｼ笏笏笏笏笏笏笏笏笏笏笏笏笏笏・ 笆ｼ   笆ｼ             笆ｼ
 fmt test          clippy
-     │
-     ▼
+     笏・     笆ｼ
    build
 ```
 
@@ -1353,11 +1339,10 @@ Example:
 
 ```text
 New Rule
-   │
-   ├── Implementation
-   ├── Documentation
-   ├── Detection test
-   └── False-positive test
+   笏・   笏懌楳笏 Implementation
+   笏懌楳笏 Documentation
+   笏懌楳笏 Detection test
+   笏披楳笏 False-positive test
 ```
 
 ---
@@ -1383,14 +1368,14 @@ The documentation should eventually include:
 ```text
 README.md
 docs/
-├── getting-started.md
-├── rules/
-│   ├── F001.md
-│   ├── F002.md
-│   └── ...
-├── configuration.md
-├── ci.md
-└── contributing.md
+笏懌楳笏 getting-started.md
+笏懌楳笏 rules/
+笏・  笏懌楳笏 F001.md
+笏・  笏懌楳笏 F002.md
+笏・  笏披楳笏 ...
+笏懌楳笏 configuration.md
+笏懌楳笏 ci.md
+笏披楳笏 contributing.md
 ```
 
 For v0.1, documentation may remain primarily within:
@@ -1406,42 +1391,52 @@ SPEC.md
 
 ## v0.1.0
 
+v0.1.0 is the initial implemented release.
+
 ### Core
 
-- [ ] Rust CLI
-- [ ] Resource discovery
-- [ ] `fxmanifest.lua` detection
-- [ ] Basic manifest parsing
-- [ ] File existence checking
-- [ ] Lua parsing
-- [ ] Diagnostic system
-- [ ] Terminal reporter
+- [x] Rust CLI
+- [x] Resource analysis
+- [x] `fxmanifest.lua` detection
+- [x] Basic manifest parsing
+- [x] Referenced-file existence checking
+- [x] Lua parsing with `full_moon`
+- [x] Structured diagnostic system
+- [x] Terminal reporter
+- [x] JSON reporter
+- [x] Severity filtering
+- [x] Exit code handling
 
 ### Rules
 
-- [ ] F001 — Missing Manifest
-- [ ] F002 — Missing Referenced File
-- [ ] F003 — Deprecated lua54
-- [ ] F004 — Potentially Unsafe Server Event
-- [ ] F005 — Potentially Expensive Frame Loop
-- [ ] F006 — Debug Output
-- [ ] F007 — Potential Privileged Event
-- [ ] F008 — Client-Controlled Value
+- [x] F001 窶・Missing Manifest
+- [x] F002 窶・Missing Referenced File
+- [x] F003 窶・Deprecated `lua54`
+- [x] F004 窶・Potentially Unsafe Server Event
+- [x] F005 窶・Potentially Expensive Frame Loop
+- [x] F006 窶・Debug Output
+- [x] F007 窶・Potential Privileged Event
+- [x] F008 窶・Client-Controlled Value
 
 ### Testing
 
-- [ ] Unit tests
-- [ ] Integration tests
-- [ ] Rule fixtures
-- [ ] False-positive tests
+- [x] Integration tests
+- [x] Rule fixtures
+- [x] Positive detection tests
+- [x] Negative / false-positive tests
+- [x] Invalid manifest analysis test
+- [x] Multiple-event analysis tests
+- [x] Safe-boundary tests
+
+The v0.1.0 test suite currently contains 36 integration tests.
 
 ### Repository
 
-- [ ] README
-- [ ] LICENSE
-- [ ] CONTRIBUTING
-- [ ] CODE_OF_CONDUCT
-- [ ] GitHub Actions CI
+- [x] README
+- [x] LICENSE
+- [x] CONTRIBUTING
+- [x] CODE_OF_CONDUCT
+- [x] GitHub Actions CI
 
 ---
 
@@ -1449,7 +1444,7 @@ SPEC.md
 
 Planned features:
 
-- [ ] JSON output
+- [x] JSON output
 - [ ] Configuration file
 - [ ] Better Lua analysis
 - [ ] More manifest rules
@@ -1516,18 +1511,13 @@ Possible future architecture:
 
 ```text
 fivem-doctor
-      │
-      ▼
+      笏・      笆ｼ
 Static Analysis
-      │
-      ▼
+      笏・      笆ｼ
 Diagnostics
-      │
-      ▼
+      笏・      笆ｼ
 Optional AI Layer
-      │
- ┌────┴────┐
- ▼         ▼
+      笏・ 笏娯楳笏笏笏笏ｴ笏笏笏笏笏・ 笆ｼ         笆ｼ
 Explain   Suggest Fix
 ```
 
@@ -1550,13 +1540,10 @@ Possible future integrations:
 
 ```text
 fivem-doctor
-      │
- ┌────┼───────────┐
- ▼    ▼           ▼
+      笏・ 笏娯楳笏笏笏笏ｼ笏笏笏笏笏笏笏笏笏笏笏笏・ 笆ｼ    笆ｼ           笆ｼ
 CLI  GitHub      VS Code
      Actions
-      │
-      ▼
+      笏・      笆ｼ
     Cloud
 ```
 
@@ -1628,8 +1615,7 @@ Example:
 fivem-doctor ./my-resource
 ```
 
-↓
-
+竊・
 ```text
 Found 3 warnings.
 
@@ -1644,8 +1630,7 @@ After fixing:
 fivem-doctor ./my-resource
 ```
 
-↓
-
+竊・
 ```text
 No problems found.
 
@@ -1666,18 +1651,14 @@ It should provide a lightweight layer of automated review between writing code a
 
 ```text
 Write Code
-    │
-    ▼
+    笏・    笆ｼ
 fivem-doctor
-    │
-    ├── Find Problems
-    ├── Explain Problems
-    └── Suggest Improvements
-    │
-    ▼
+    笏・    笏懌楳笏 Find Problems
+    笏懌楳笏 Explain Problems
+    笏披楳笏 Suggest Improvements
+    笏・    笆ｼ
 Review
-    │
-    ▼
+    笏・    笆ｼ
 Deploy
 ```
 
@@ -1685,9 +1666,9 @@ Deploy
 
 # 49. Specification Status
 
-This document describes the intended architecture and scope of `fivem-doctor` v0.1.
+This document describes the implemented architecture and scope of `fivem-doctor` v0.1.0, together with planned future features.
 
-Implementation details may change as development progresses.
+Implementation details may change in future releases. Significant changes should be documented in `CHANGELOG.md`.
 
 Any significant architectural change should be documented in:
 
@@ -1697,4 +1678,4 @@ CHANGELOG.md
 
 and, where appropriate, reflected in this specification.
 
-**Current status: Draft**
+**Current status: Implemented**

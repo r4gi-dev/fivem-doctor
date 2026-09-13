@@ -286,7 +286,7 @@ fn first_string_argument(call_text: &str) -> Option<String> {
         let quote = character;
         let mut value = String::new();
 
-        while let Some(character) = chars.next() {
+        for character in chars.by_ref() {
             if character == quote {
                 return Some(value);
             }

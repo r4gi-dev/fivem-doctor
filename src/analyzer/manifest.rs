@@ -64,10 +64,8 @@ fn extract_manifest(ast: &Ast) -> ResourceManifest {
                 manifest.dependencies.extend(values);
             }
 
-            "lua54" => {
-                if values.iter().any(|value| value.eq_ignore_ascii_case("yes")) {
-                    manifest.lua54 = true;
-                }
+            "lua54" if values.iter().any(|value| value.eq_ignore_ascii_case("yes")) => {
+                manifest.lua54 = true;
             }
 
             _ => {}

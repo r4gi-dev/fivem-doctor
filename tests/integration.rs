@@ -17,6 +17,13 @@ fn run_fixture_with_args(fixture: &str, args: &[&str]) -> Output {
         .expect("failed to execute fivem-doctor")
 }
 
+fn run_cli(args: &[&str]) -> Output {
+    Command::new(env!("CARGO_BIN_EXE_fivem-doctor"))
+        .args(args)
+        .output()
+        .expect("failed to execute fivem-doctor")
+}
+
 fn assert_exit_code(output: &Output, expected: i32) {
     assert_eq!(
         output.status.code(),
@@ -324,4 +331,162 @@ fn json_output_with_all_diagnostics_filtered_exits_successfully() {
         diagnostics.is_empty(),
         "expected an empty JSON array when all diagnostics are filtered"
     );
+}
+
+#[test]
+fn missing_cli_arguments_exit_with_code_2() {
+    let output = run_cli(&[]);
+
+    assert_exit_code(&output, 2);
+
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(stderr.contains("Usage:"));
+}
+
+#[test]
+fn invalid_format_exits_with_code_2() {
+    let output = run_cli(&[
+        "tests/fixtures/valid-resource",
+        "--format",
+        "invalid-format",
+    ]);
+
+    assert_exit_code(&output, 2);
+
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(stderr.contains("invalid value"));
+}
+
+#[test]
+fn invalid_severity_exits_with_code_2() {
+    let output = run_cli(&["tests/fixtures/valid-resource", "--severity", "critical"]);
+
+    assert_exit_code(&output, 2);
+
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(stderr.contains("invalid value"));
+}
+
+#[test]
+fn invalid_manifest_exits_with_code_3() {
+    let output = run_fixture("invalid-manifest");
+
+    assert_exit_code(&output, 3);
+
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(stderr.contains("failed to analyze"));
+    assert!(stderr.contains("failed to parse fxmanifest.lua"));
+}
+
+#[test]
+fn cli_errors_do_not_emit_diagnostics() {
+    let output = run_cli(&["--severity", "critical"]);
+
+    assert_exit_code(&output, 2);
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(stdout.is_empty());
+}
+
+#[test]
+fn lua54_no_does_not_report_f003() {
+    let output = run_fixture("lua54-no");
+
+    assert_exit_code(&output, 0);
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(!stdout.contains("F003"));
+    assert!(stdout.contains("No problems found."));
+}
+
+#[test]
+fn wait_with_nonzero_interval_does_not_report_f005() {
+    let output = run_fixture("performance-safe");
+
+    assert_exit_code(&output, 0);
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(!stdout.contains("F005"));
+    assert!(stdout.contains("No problems found."));
+}
+
+#[test]
+fn wait_zero_outside_loop_does_not_report_f005() {
+    let output = run_fixture("wait-outside-loop");
+
+    assert_exit_code(&output, 0);
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(!stdout.contains("F005"));
+    assert!(stdout.contains("No problems found."));
+}
+
+#[test]
+fn print_inside_string_does_not_report_f006() {
+    let output = run_fixture("debug-print-safe");
+
+    assert_exit_code(&output, 0);
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(!stdout.contains("F006"));
+    assert!(stdout.contains("No problems found."));
+}
+
+#[test]
+fn multiple_events_detects_unsafe_event() {
+    let output = run_fixture("multiple-events");
+
+    assert_exit_code(&output, 1);
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+
+    assert!(stdout.contains("F004"));
+    assert!(stdout.contains("F007"));
+}
+
+#[test]
+fn ace_permission_check_prevents_f004_and_f007() {
+    let output = run_fixture("permission-safe-event");
+
+    assert_exit_code(&output, 0);
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+
+    assert!(!stdout.contains("F004"));
+    assert!(!stdout.contains("F007"));
+    assert!(stdout.contains("No problems found."));
+}
+
+#[test]
+fn non_privileged_event_does_not_report_f007() {
+    let output = run_fixture("non-privileged-event");
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+
+    assert!(!stdout.contains("F007"));
+}
+
+#[test]
+fn mismatched_event_names_do_not_report_f004_or_f007() {
+    let output = run_fixture("mismatched-events");
+
+    assert_exit_code(&output, 0);
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+
+    assert!(!stdout.contains("F004"));
+    assert!(!stdout.contains("F007"));
+    assert!(stdout.contains("No problems found."));
+}
+
+#[test]
+fn trigger_server_event_with_table_argument_reports_f008() {
+    let output = run_fixture("server-event-table-argument");
+
+    assert_exit_code(&output, 1);
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+
+    assert!(stdout.contains("F008"));
+    assert!(stdout.contains("Client-controlled value"));
 }

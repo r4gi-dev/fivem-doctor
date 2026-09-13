@@ -62,7 +62,9 @@ impl ResourceAnalyzer {
                         format!("Referenced file does not exist: {}", file.display()),
                         "fxmanifest.lua",
                     )
-                    .with_suggestion(format!("Create the file or remove it from fxmanifest.lua.")),
+                    .with_suggestion(
+                        "Create the file or remove it from fxmanifest.lua.".to_string(),
+                    ),
                 );
             }
         }
