@@ -490,3 +490,15 @@ fn trigger_server_event_with_table_argument_reports_f008() {
     assert!(stdout.contains("F008"));
     assert!(stdout.contains("Client-controlled value"));
 }
+
+#[test]
+fn external_resource_reference_does_not_report_f002() {
+    let output = run_fixture("external-resource-reference");
+
+    assert_exit_code(&output, 0);
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+
+    assert!(!stdout.contains("F002"));
+    assert!(stdout.contains("No problems found."));
+}

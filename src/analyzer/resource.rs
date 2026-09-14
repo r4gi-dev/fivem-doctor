@@ -52,8 +52,11 @@ impl ResourceAnalyzer {
         referenced_files.extend(&manifest.files);
 
         for file in referenced_files {
-            let path = self.root.join(file);
+            if file.to_string_lossy().starts_with('@') {
+                continue;
+            }
 
+            let path = self.root.join(file);
             if !path.exists() {
                 diagnostics.push(
                     Diagnostic::new(
@@ -62,9 +65,7 @@ impl ResourceAnalyzer {
                         format!("Referenced file does not exist: {}", file.display()),
                         "fxmanifest.lua",
                     )
-                    .with_suggestion(
-                        "Create the file or remove it from fxmanifest.lua.".to_string(),
-                    ),
+                    .with_suggestion("Create the file or remove it from fxmanifest.lua."),
                 );
             }
         }
